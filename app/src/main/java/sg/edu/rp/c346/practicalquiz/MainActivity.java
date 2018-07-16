@@ -36,19 +36,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // Get the index of the spinner item
-                int pos = spnClass.getSelectedItemPosition();
-
-                prefs = getSharedPreferences("pref", Context.MODE_PRIVATE);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 SharedPreferences.Editor prefEdit = prefs.edit();
-
-                prefEdit.putInt("pos", pos);
+                prefEdit.putString("class", spnClass.getSelectedItem().toString());
+                prefEdit.putInt("classNo", spnClass.getSelectedItemPosition());
                 prefEdit.commit();
 
-                spnClass.setSelection(pos);
-
-                Toast toast = Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG);
-                toast.show();
+                Toast.makeText(MainActivity.this,"Saved",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -58,14 +52,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         String name = etName.getText().toString();
-        int age = Integer.parseInt(etAge.getText().toString());
-        //int pos = spnClass.getSelectedItemPosition();
+        String age = etAge.getText().toString();
+
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefEdit = prefs.edit();
 
-        prefEdit.putInt("age", age);
         prefEdit.putString("name", name);
+        if(age.isEmpty()){
+            prefEdit.putInt("age",0);
+        }
+        else{
+            prefEdit.putInt("age",Integer.parseInt(age));
+        }
+        //int pos = spnClass.getSelectedItemPosition();
         //prefEdit.putInt("pos", pos);
         prefEdit.commit();
     }
@@ -88,5 +88,8 @@ public class MainActivity extends AppCompatActivity {
             etAge.setText(age + "");
         }
         //spnClass.setSelection(pos);
+
+        int classNo = prefs.getInt("classNo", 0);
+        spnClass.setSelection(classNo);
     }
 }
